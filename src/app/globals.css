@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-off-white: #fafafa;
+  --color-green: #00703a;
+  --color-stroke: 0, 0, 0, .1;
+}
+
+body {
+  color: var(--color-black);
+  background: var(--color-white);
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, Ubuntu, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
