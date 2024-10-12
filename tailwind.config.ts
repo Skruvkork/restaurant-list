@@ -15,6 +15,24 @@ const config: Config = {
         green: "var(--color-green)",
         stroke: "rgba(var(--color-stroke))",
       },
+      fontSize: {
+        base: ["0.75rem", {
+          lineHeight: "var(--text-line-height)",
+          letterSpacing: "var(--text-letter-spacing)",
+        }],
+        xl: ["0.875rem", {
+          lineHeight: "var(--text-line-height)",
+          letterSpacing: "var(--text-letter-spacing)",
+        }],
+        "2xl": ["1.5rem", {
+          lineHeight: "var(--text-line-height)",
+          letterSpacing: "var(--text-letter-spacing)",
+        }],
+        "3xl": ["2.5rem", {
+          lineHeight: "var(--text-line-height)",
+          letterSpacing: "var(--text-letter-spacing)",
+        }]
+      }
     },
   },
   plugins: [],

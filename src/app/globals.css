@@ -8,6 +8,8 @@
   --color-off-white: #fafafa;
   --color-green: #00703a;
   --color-stroke: 0, 0, 0, .1;
+  --text-line-height: 0.9375rem;
+  --text-letter-spacing: -0.03125rem;
 }
 
 body {
