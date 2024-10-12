@@ -8,13 +8,13 @@
   --color-off-white: #fafafa;
   --color-green: #00703a;
   --color-stroke: 0, 0, 0, .1;
-  --text-line-height: 0.9375rem;
+  --text-line-height: 125%;
   --text-letter-spacing: -0.03125rem;
 }
 
 body {
   color: var(--color-black);
-  background: var(--color-white);
+  background: var(--color-off-white);
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, Ubuntu, sans-serif;
 }
 
