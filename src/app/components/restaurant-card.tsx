@@ -9,6 +9,8 @@ type RestaurantCardProps = {
   imageUrl: string;
 }
 
+const openingTime = '12 pm';
+
 export default function RestaurantCard({ name, open, deliveryTimeMinutes, imageUrl }: RestaurantCardProps) {
   return (
     <li
@@ -25,6 +27,11 @@ export default function RestaurantCard({ name, open, deliveryTimeMinutes, imageU
         height={140}
         className={`absolute top-[-30px] right-[-30px] ${!open && 'opacity-20'}`}
       />
+      {!open &&
+        <div className="self-center py-2 px-3 leading-none bg-off-white rounded border border-stroke z-10">
+          Opens tomorrow at {openingTime}
+        </div>
+      }
       <div className={`flex justify-between align-bottom ${!open && 'opacity-20'}`}>
         <p className="text-2xl">{name}</p>
         <div className="flex items-center justify-center size-8 rounded-full bg-green text-white text-xl">→</div>
