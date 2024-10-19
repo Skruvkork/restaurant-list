@@ -86,7 +86,7 @@ export default function RestaurantList({ restaurants, categories }: RestaurantLi
   });
 
   return (
-    <ul className="space-y-2.5">
+    <ul className="space-y-2.5 lg:space-y-0 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
       {filteredRestaurants.map(restaurant =>
         <RestaurantCard
           key={restaurant.id}

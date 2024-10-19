@@ -17,8 +17,8 @@ export default async function Home() {
   const categories = await getRestaurantCategories()
 
   return (
-    <div className="mt-10 sm:mt-14 space-y-6 text-base">
-      <header className="px-6">
+    <div className="mt-10 sm:mt-14 pb-8 space-y-6 text-base">
+      <header className="px-6 sm:mb-12">
           <Image
             src={logo}
             alt="Munchies logo"
