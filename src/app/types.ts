@@ -6,6 +6,9 @@ export type RequestError = {
 export type Filter = {
   id: string;
   name: string;
+}
+
+export type CategoryFilter = Filter & {
   image_url: string;
 }
 
@@ -13,9 +16,12 @@ export type Restaurant = {
   id: string;
   name: string;
   rating: number;
-  filterIds: Filter['id'][];
+  filter_ids: CategoryFilter['id'][];
   image_url: string;
   delivery_time_minutes: number;
+  price_range_id: string;
+  open: boolean;
+  priceRange: keyof typeof PriceRangeLevel;
 }
 
 export type RestaurantResponse = {
@@ -24,6 +30,18 @@ export type RestaurantResponse = {
 
 export type OpenStatus = {
   restaurant_id: string;
-  is_currently_open: boolean;
+  is_open: boolean;
+}
+
+export enum PriceRangeLevel {
+  '$',
+  '$$',
+  '$$$',
+  '$$$$'
+}
+
+export type PriceRange = {
+  id: string;
+  range: keyof typeof PriceRangeLevel;
 }
 

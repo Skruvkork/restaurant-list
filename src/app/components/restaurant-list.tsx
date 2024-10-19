@@ -1,55 +1,101 @@
-import { OpenStatus, Restaurant, RestaurantResponse, RequestError } from "../types";
-import RestaurantCard from "./restaurant-card"
+'use client';
 
-const getRestaurantOpenStatus = async (restaurantId: Restaurant['id']) => {
-  const res = await fetch(`${process.env.API_URL}/open/${restaurantId}`);
-  const response: OpenStatus | RequestError = await res.json();
+import qs from 'qs';
+import { useSearchParams } from 'next/navigation';
+import { CategoryFilter, PriceRangeLevel, Restaurant } from '../types';
+import RestaurantCard from './restaurant-card';
+import { ActiveFilters } from '../utils/query-params';
 
-  if ('error' in response) {
-    return Promise.reject(response.reason);
-  }
+function parseQueryParams<T>(parser: (arg: string) => T, params?: string | string[], ) {
+  if (!params) return [];
 
-  return response.is_currently_open;
+  if (typeof params === 'string')
+    return [parser(params)];
+
+  return params.map((param) => parser(param));
 }
 
-const getRestaurants = async () => {
-  const res = await fetch(`${process.env.API_URL}/restaurants`);
-  const response: RestaurantResponse = await res.json();
+const matchesDeliveryTime = (
+  restaurant: Restaurant,
+  params?: string | string[],
+) => {
+  if (!params) return true;
 
-  const restaurants = response.restaurants.map(async (restaurant) => {
-    try {
-      const openStatus = await getRestaurantOpenStatus(restaurant.id);
-      return { ...restaurant, open: openStatus };
-    } catch (error) {
-      console.error(
-        `Error: Could not fetch open status for restaurant ${restaurant.name}, id: ${restaurant.id} \n`,
-        `Reason: ${error}`
-      );
-      return { ...restaurant, open: false };
+  const parseValues = (param: string): [number, number] => {
+    if (param.endsWith("+")) {
+      return [parseInt(param), Math.max()];
     }
+    const parts = param.split("-").map((p) => parseInt(p));
+    return [parts[0], parts[1]];
+  };
+
+  const ranges =
+    typeof params === "string"
+      ? [parseValues(params)]
+      : params.map(parseValues);
+
+  return ranges.some(
+    (range: [number, number]) =>
+      restaurant.delivery_time_minutes >= range[0] &&
+      restaurant.delivery_time_minutes <= range[1],
+  );
+};
+
+const matchesPriceLevel = (
+  restaurant: Restaurant,
+  levels: PriceRangeLevel[]
+) => {
+  if (!levels.length) return true;
+  const level = PriceRangeLevel[restaurant.priceRange];
+
+  return levels.includes(level);
+}
+
+const matchesCategory = (
+  restaurant: Restaurant,
+  params?: CategoryFilter['id'] | CategoryFilter['id'][]
+) => {
+  if (!params || !restaurant.filter_ids) return true;
+  const categories = Array.isArray(params) ? params : [params];
+
+  return restaurant.filter_ids.some((filterId) => categories.includes(filterId));
+}
+
+type RestaurantListProps = {
+  restaurants: Restaurant[];
+  categories: CategoryFilter[];
+}
+
+export default function RestaurantList({ restaurants, categories }: RestaurantListProps) {
+  const searchParams = useSearchParams();
+
+  const activeFilters: ActiveFilters = qs.parse(searchParams.toString());
+
+  const filteredRestaurants = restaurants.filter(restaurant => {
+    const category = matchesCategory(restaurant, activeFilters['category']);
+    const time = matchesDeliveryTime(restaurant, activeFilters['delivery-time']);
+    const price = matchesPriceLevel(
+      restaurant,
+      parseQueryParams<PriceRangeLevel>(
+        parseInt,
+        activeFilters['price-range']
+      )
+    );
+
+    return category && time && price;
   });
 
-  return Promise.all(restaurants);
-}
-
-export default async function RestaurantList() {
-  const restaurants = await getRestaurants();
-
   return (
-    <section className="space-y-5">
-      <h1 className="text-2xl">Restaurants</h1>
-
-      <ul className="space-y-2.5">
-        {restaurants.map(restaurant =>
-          <RestaurantCard
-            key={restaurant.id}
-            name={restaurant.name}
-            deliveryTimeMinutes={restaurant.delivery_time_minutes}
-            open={restaurant.open}
-            imageUrl={restaurant.image_url}
-          />
-        )}
-      </ul>
-    </section>
+    <ul className="space-y-2.5">
+      {filteredRestaurants.map(restaurant =>
+        <RestaurantCard
+          key={restaurant.id}
+          name={restaurant.name}
+          deliveryTimeMinutes={restaurant.delivery_time_minutes}
+          open={restaurant.open}
+          imageUrl={restaurant.image_url}
+        />
+      )}
+    </ul>
   )
 }
